@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorīti</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4287f5;
+            --primary-dark: #2463cc;
+            --primary-light: #6ba5ff;
+            --accent: #42d97c;
+            --accent-dark: #2ab662;
+            --accent-light: #7eeaa7;
+            --secondary: #9c5fff;
+            --dark-bg: #0c0c14;
+            --dark-surface: #161622;
+            --dark-surface-2: #1d1d2d;
+            --card-bg: #1a1a28;
+            --text-primary: #f0f0f0;
+            --text-secondary: #aab0c0;
+            --border-color: #2c2c3a;
+            --favorited: #ffce44;
+            --danger: #ff5252;
+            --hover-transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(66, 135, 245, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(66, 135, 245, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(66, 135, 245, 0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse-subtle {
+            0% { box-shadow: 0 0 0 0 rgba(58, 58, 76, 0.6); }
+            70% { box-shadow: 0 0 0 8px rgba(58, 58, 76, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(58, 58, 76, 0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes caseGlow {
+            0% { box-shadow: 0 0 5px rgba(66, 135, 245, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(66, 135, 245, 0.5), 0 0 25px rgba(66, 135, 245, 0.3); }
+            100% { box-shadow: 0 0 5px rgba(66, 135, 245, 0.3); }
+        }
+
+        @keyframes powerPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes fanSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes rgbShift {
+            0% { border-color: var(--primary); }
+            33% { border-color: var(--accent); }
+            66% { border-color: var(--secondary); }
+            100% { border-color: var(--primary); }
+        }
+
+        @keyframes rgbComponent {
+            0% { background-color: var(--primary); }
+            33% { background-color: var(--accent); }
+            66% { background-color: var(--secondary); }
+            100% { background-color: var(--primary); }
+        }
+
+        @keyframes glitchBurst {
+            0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+            20% { transform: translate(5px, -5px) scale(1.1); opacity: 0.6; }
+            40% { transform: translate(-5px, 5px) scale(0.9); opacity: 0.4; }
+            60% { transform: translate(3px, -3px) scale(1.05); opacity: 0.6; }
+            100% { transform: translate(0, -50px) scale(1); opacity: 0; }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes rgbEffect {
+            0% { background-position: 0% 50%; filter: hue-rotate(0deg); }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; filter: hue-rotate(360deg); }
+        }
+
+        @keyframes priceChange {
+            0% { background-color: #ffeb3b; }
+            100% { background-color: transparent; }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes tooltipFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--dark-surface);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #4287f5, #9c5fff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        .atpakal-button {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            cursor: pointer;
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+            font-weight: 500;
+            transition: var(--hover-transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .atpakal-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            border-color: rgba(66, 135, 245, 0.3);
+        }
+
+        .atpakal-button:active {
+            transform: translateY(0);
+        }
+        .spec {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.spec-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-right: 1rem; /* Ensure a consistent gap */
+    flex-shrink: 0;
+}
+
+.spec-value {
+    color: var(--text-secondary);
+    text-align: right;
+    flex-grow: 1;
+}
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .favorites-list {
+            display: flex;
+            flex-direction: column;
+            background: rgba(22, 22, 34, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            overflow-y: auto;
+            border: 1px solid rgba(44, 44, 58, 0.8);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .favorite-item {
+            padding: 20px;
+            transition: var(--hover-transition);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            background-color: rgba(26, 26, 40, 0.8);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: visible;
+            animation: fadeIn 0.5s ease-out;
+            margin-bottom: 1.5rem;
+            z-index: 1;
+        }
+
+        .favorite-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+            opacity: 0;
+            transition: var(--hover-transition);
+        }
+
+        .favorite-item:hover {
+            transform: translateY(-5px) scale(1.01);
+            background-color: rgba(29, 29, 45, 0.95);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+            border-color: rgba(66, 135, 245, 0.3);
+            z-index: 2;
+        }
+
+        .favorite-item:hover::before {
+            opacity: 1;
+        }
+
+        .component-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+            border: 1px solid var(--border-color);
+            transition: var(--hover-transition);
+        }
+
+        .component-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(66, 135, 245, 0.3);
+        }
+
+        .favorite-item h3 {
+            margin: 0;
+            font-size: 20px;
+            color: var(--primary);
+            font-weight: 600;
+            transition: var(--hover-transition);
+        }
+
+        .favorite-item:hover h3 {
+            transform: translateX(5px);
+        }
+
+        .favorite-item h3 a {
+            color: var(--primary-light);
+            text-decoration: none;
+            transition: var(--hover-transition);
+            position: relative;
+        }
+
+        .favorite-item h3 a:hover {
+            color: var(--primary);
+        }
+
+        .favorite-item h3 a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--primary);
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+        }
+
+        .favorite-item h3 a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        .favorite-item p {
+            margin: 10px 0;
+            color: var(--text-secondary);
+            font-size: 15px;
+            transition: var(--hover-transition);
+        }
+
+        .favorite-details {
+            flex-grow: 1;
+            transition: var(--hover-transition);
+        }
+
+        .specs-table {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+            font-size: 14px;
+            margin-right: 30px;
+        }
+
+        .specs-table .spec {
+            display: flex;
+            align-items: center;
+            transition: var(--hover-transition);
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: rgba(22, 22, 34, 0.4);
+        }
+
+        .specs-table .spec:hover {
+            background: rgba(66, 135, 245, 0.1);
+            transform: translateX(3px);
+        }
+
+        .spec-label {
+            font-weight: 500;
+            color: var(--text-primary);
+            min-width: 120px;
+        }
+
+        .spec-value {
+            color: var(--text-secondary);
+        }
+
+        .price-and-button {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 1rem;
+        }
+
+        .favorite-price {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .price-updated {
+            animation: priceChange 1s ease;
+        }
+
+        .price-updated i {
+            color: var(--favorited);
+        }
+
+        .price-unavailable i {
+            color: #ff9500;
+        }
+
+        .price-change {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 10px;
+            background: rgba(22, 22, 34, 0.6);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            animation: slideIn 0.5s ease-out;
+            margin-top: 4px;
+        }
+
+        .price-change.increase {
+            color: var(--danger);
+        }
+
+        .price-change.decrease {
+            color: var(--accent);
+        }
+
+        .price-change i {
+            font-size: 0.9rem;
+        }
+
+        .price-change span {
+            font-weight: 500;
+        }
+
+        .price-history-tooltip {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: rgba(22, 22, 34, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(66, 135, 245, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            min-width: 220px;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-top: 8px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .favorite-price:hover .price-history-tooltip,
+        .price-history-tooltip.shown-via-click {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .price-history-tooltip p {
+            margin: 4px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price-history-tooltip .price {
+            font-weight: 500;
+        }
+
+        .price-history-tooltip .timestamp {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .price-text {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+
+        .price-percentage {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .price-percentage.increase {
+            color: var(--danger);
+        }
+
+        .price-percentage.decrease {
+            color: var(--accent);
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: var(--hover-transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:focus {
+            outline: none;
+            animation: pulse-subtle 1.5s infinite;
+        }
+
+        .delete-button {
+            background-color: rgba(255, 66, 66, 0.15);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            width: 100%;
+        }
+
+        .delete-button:hover {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .add-button {
+            background-color: var(--primary);
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .add-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .empty-message {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .goto-button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--hover-transition);
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease infinite;
+        }
+
+        .goto-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(66, 135, 245, 0.4);
+        }
+
+        .empty-animation {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin-bottom: 2rem;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            animation: floatAndRotate 6s ease-in-out infinite;
+        }
+
+        @keyframes floatAndRotate {
+            0%, 100% { transform: rotateX(15deg) rotateY(-30deg) translateY(0) rotateZ(0deg); }
+            50% { transform: rotateX(15deg) rotateY(-30deg) translateY(-10px) rotateZ(2deg); }
+        }
+
+        .pc-side {
+            position: absolute;
+            width: 160px;
+            height: 140px;
+            background: linear-gradient(135deg, #2c3e50, #1a2530);
+            border-radius: 4px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transform: translateZ(80px) translateX(30px) translateY(40px);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pc-window {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 140px;
+            height: 120px;
+            background: rgba(13, 19, 23, 0.4);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 0 15px rgba(0, 100, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .pc-window::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 0, 128, 0.1), rgba(0, 255, 255, 0.1));
+            animation: rgbEffect 8s infinite alternate;
+        }
+
+        .motherboard {
+            position: absolute;
+            bottom: 30px;
+            left: 10px;
+            width: 110px;
+            height: 80px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            border-radius: 3px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .pc-fan {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: radial-gradient(circle, #0a0a0a 30%, transparent 30%),
+                        conic-gradient(from 0deg, transparent 0%, rgba(0, 149, 255, 0.1) 20%, transparent 40%, rgba(0, 149, 255, 0.1) 60%, transparent 80%, rgba(0, 149, 255, 0.1) 100%);
+            animation: spin 3s linear infinite;
+        }
+
+        .pc-components {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            width: 110px;
+            height: 60px;
+        }
+
+        .component {
+            position: absolute;
+            background: #1e272e;
+            border-radius: 3px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .component:nth-child(1) {
+            width: 90px;
+            height: 25px;
+            bottom: 0;
+            left: -10px;
+            background: linear-gradient(90deg, #2c3e50, #34495e);
+        }
+
+        .component:nth-child(2) {
+            width: 10px;
+            height: 40px;
+            bottom: 30px;
+            right: 20px;
+            background: linear-gradient(135deg, #2c3e50, #4a627a);
+        }
+
+        .component:nth-child(3) {
+            width: 10px;
+            height: 40px;
+            bottom: 30px;
+            right: 40px;
+            background: linear-gradient(135deg, #2c3e50, #4a627a);
+        }
+
+        .component:nth-child(4) {
+            width: 60px;
+            height: 10px;
+            top: 45px;
+            left: -8px;
+            background: #1e272e;
+        }
+
+        .pc-front {
+            position: absolute;
+            width: 70px;
+            height: 133px;
+            background: linear-gradient(to right, #1a1a1a, #2c3e50);
+            transform: rotateY(90deg) translateZ(190px) translateX(-105px) translateY(65px);
+            border-radius: 4px 0 0 4px;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .front-fan {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            left: 10px;
+            border-radius: 50%;
+            background: #0f1923;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+        }
+
+        .front-fan::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border-radius: 50%;
+            background: radial-gradient(circle, transparent 30%, #0a0a0a 30%),
+                        conic-gradient(from 0deg,
+                            #ff0000 0%, #ff7f00 10%, #ffff00 20%, #7fff00 30%, #00ff00 40%,
+                            #00ff7f 50%, #00ffff 60%, #007fff 70%, #0000ff 80%, #7f00ff 90%, #ff00ff 100%);
+            animation: spin 4s linear infinite;
+        }
+
+        .top-fan {
+            top: 10px;
+        }
+
+        .bottom-fan {
+            bottom: 15px;
+        }
+
+        .pc-top {
+            position: absolute;
+            width: 160px;
+            height: 80px;
+            background: linear-gradient(to bottom, #1a1a1a, #2c3e50);
+            transform: rotateX(90deg) translateY(-20px) translateZ(27px) translateX(-5px);
+            border-radius: 4px 4px 0 0;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .pc-top1 {
+            position: absolute;
+            width: 160px;
+            height: 80px;
+            background: linear-gradient(to bottom, #2c3e50, #1a1a1a);
+            transform: rotateX(90deg) translateY(20px) translateZ(-136px) translateX(18px);
+            border-radius: 4px 4px 0 0;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .price-history-tooltip {
+                min-width: 180px;
+                font-size: 0.8rem;
+                right: 0;
+            }
+        }
+
+        @keyframes bubble {
+            0% { transform: translateY(0) scale(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-100px) scale(1); opacity: 0; }
+        }
+
+        .bubble {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(0, 149, 255, 0.5);
+            border-radius: 50%;
+            animation: bubble 2s infinite ease-in-out;
+        }
+
+        .error-message {
+            position: absolute;
+            color: #ff4444;
+            font-family: monospace;
+            font-size: 0.8rem;
+            animation: glitch 1s infinite;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 data-key="favorites">FAVORĪTI</h1>
+        <button class="atpakal-button" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+            <span data-key="back">Atpakaļ</span>
+        </button>
+    </header>
+    <main>
+        <div class="favorites-list" id="favorites-list">
+            <!-- Favorites will be populated here -->
+        </div>
+    </main>
+<!-- HTML remains the same as provided, only the <script> section is modified -->
+    <script>
+      
+// Translations (unchanged)
+const translations = {
+    lv: {
+        favorites: "Favorīti",
+        back: "Atpakaļ",
+        noFavorites: "Jūs neesat pievienojis nevienu komponenti favorītiem.",
+        selectComponents: "Izvēlēties",
+        model: "Modelis",
+        memory: "Atmiņa",
+        store: "Veikals",
+        cores: "Kodolu skaits",
+        clockSpeed: "Takts frekvence",
+        brand: "Zīmols",
+        chipset: "Čipsets",
+        socket: "Ligzda",
+        formfactor: "Formāts",
+        add: "Pievienot",
+        delete: "Dzēst",
+        unknownType: "Neizdevās noteikt ierīces tipu.",
+        capacity: "Kapacitāte",
+        readSpeed: "Lasīšanas ātrums",
+        writeSpeed: "Rakstīšanas ātrums",
+        interface: "Interfeiss"
+    },
+    en: {
+        favorites: "Favorites",
+        back: "Back",
+        noFavorites: "You haven't favorited any components.",
+        selectComponents: "Select Components",
+        model: "Model",
+        memory: "Memory",
+        store: "Store",
+        cores: "Core Count",
+        clockSpeed: "Clock Speed",
+        brand: "Brand",
+        chipset: "Chipset",
+        socket: "Socket",
+        formfactor: "Form Factor",
+        add: "Add",
+        delete: "Delete",
+        unknownType: "Failed to determine device type.",
+        capacity: "Capacity",
+        readSpeed: "Read Speed",
+        writeSpeed: "Write Speed",
+        interface: "Interface"
+    }
+};
+
+// Constants (unchanged)
+const PRICE_UPDATE_INTERVAL = 5 * 60 * 1000; // 5 minutes in milliseconds
+const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/100x100.png?text=Component';
+
+// Utility functions (unchanged)
+function escapeString(str) {
+    return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/`/g, '\\`').replace(/\n/g, '');
+}
+
+function formatTimestampToHour(timestamp) {
+    const date = new Date(timestamp);
+    date.setMinutes(date.getMinutes() < 30 ? 0 : 60);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = '00';
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
+// Fetch and parse CSV for all components
+async function fetchComponentPrices() {
+    const csvFiles = [
+        {
+            type: 'gpu',
+            file: 'gpu_data_combined.csv',
+            priceCol: 4,
+            linkCol: 5,
+            imageCol: 9,
+            dataCols: {
+                name: 0,
+                shortName: 1,
+                brand: 2,
+                model: 3,
+                store: 6,
+                memory: 7,
+                wattage: 8,
+                imageUrl: 9
+            }
+        },
+        {
+            type: 'cpu',
+            file: 'cpu_data_combined.csv',
+            priceCol: 9, // Price
+            linkCol: 10, // Link
+            imageCol: 13, // Image URL
+            dataCols: {
+                name: 0, // CPU Name
+                model: 12, // Model
+                cores: 5, // Cores
+                threads: 6, // Threads
+                baseClock: 7, // GHz
+                boostClock: 7, // Using GHz as boostClock (CSV lacks separate field)
+                socket: 4, // Socket
+                brand: 1, // Brand
+                integratedGraphics: -1, // Not in CSV, set to empty
+                store: 11, // Store
+                generation: 2, // Generation
+                series: 3, // Series
+                tdp: 8 // TDP
+            }
+        },
+        {
+            type: 'motherboard',
+            file: 'combined_motherboard_data.csv',
+            priceCol: 12,
+            linkCol: 13,
+            imageCol: 15,
+            dataCols: {
+                name: 0,
+                brand: 1,
+                platform: 2,
+                formfactor: 3,
+                chipset: 4,
+                socket: 5,
+                memorytype: 6,
+                wifi: 7,
+                bluetooth: 8,
+                wifitype: 9,
+                m2slots: 10,
+                ramslots: 11,
+                store: 14
+            }
+        },
+        {
+            type: 'ssd',
+            file: 'ssd_data_rd.csv',
+            priceCol: 2,
+            linkCol: 9,
+            imageCol: 11,
+            dataCols: {
+                name: 0,
+                brand: 1,
+                capacity: 3,
+                type: 4,
+                readSpeed: 5,
+                writeSpeed: 6,
+                formFactor: 7,
+                interface: 8,
+                store: 10,
+                imageUrl: 11
+            }
+        }
+    ];
+
+    const priceData = {};
+
+    for (const { type, file, priceCol, linkCol, imageCol, dataCols } of csvFiles) {
+        try {
+            const response = await fetch(`${file}?t=${Date.now()}`);
+            console.log(`Fetching ${file}: Status ${response.status}`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ${file}: ${response.status} ${response.statusText}`);
+            }
+            const data = await response.text();
+            console.log(`CSV ${file} first row:`, data.split("\n")[0]);
+            const rows = data.split("\n").slice(1).filter(row => row.trim() !== "");
+
+            rows.forEach(row => {
+                const columns = row.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map(col => col.trim().replace(/^"(.*)"$/, '$1'));
+                console.log(`Parsed ${type} row:`, columns);
+                if (columns.length > Math.max(priceCol, linkCol, imageCol)) {
+                    const price = parseFloat(columns[priceCol].replace(/[^0-9.-]+/g, "")) || 0;
+                    const link = columns[linkCol] || "#";
+                    const image = columns[imageCol] || PLACEHOLDER_IMAGE;
+                    const componentData = { price, image, type, link };
+
+                    Object.keys(dataCols).forEach(key => {
+                        let value = dataCols[key] >= 0 && columns[dataCols[key]] !== undefined ? columns[dataCols[key]] : '';
+                        if (type === 'gpu' && key === 'memory') {
+                            const memoryMatch = value.match(/(\d+)\s?(?:GB|G)?/i);
+                            value = memoryMatch ? parseInt(memoryMatch[1], 10) : 0;
+                        } else if (type === 'gpu' && key === 'wattage') {
+                            const wattageMatch = value.match(/(\d{1,3})\s?W\b/i);
+                            value = wattageMatch ? parseInt(wattageMatch[1], 10) : 0;
+                        } else if (type === 'cpu' && ['cores', 'threads', 'tdp'].includes(key)) {
+                            value = parseInt(value.replace(/W$/, ''), 10) || 0;
+                        } else if (type === 'cpu' && ['baseClock', 'boostClock'].includes(key)) {
+                            value = parseFloat(value) || 0;
+                        } else if (type === 'ssd' && ['capacity', 'readSpeed', 'writeSpeed'].includes(key)) {
+                            const numMatch = value.match(/(\d+)/);
+                            value = numMatch ? parseInt(numMatch[1], 10) : 0;
+                        }
+                        componentData[key] = value;
+                    });
+
+                    priceData[link] = componentData;
+                }
+            });
+        } catch (error) {
+            console.error(`Error fetching ${file}:`, error);
+        }
+    }
+
+    console.log('Price data links:', Object.keys(priceData));
+    return priceData;
+}
+
+// Update favorite prices
+async function updateFavoritePrices() {
+    const priceData = await fetchComponentPrices();
+    if (!priceData) return;
+
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    let updated = false;
+    const now = Date.now();
+
+    console.log('Favorites before update:', favorites);
+
+    favorites = favorites.map(fav => {
+        if (['gpu', 'cpu', 'motherboard', 'ssd'].includes(fav.type)) {
+            const itemLink = fav.link || fav.url || '#';
+            console.log(`Checking ${fav.type}: ${fav.name}, link: ${itemLink}`);
+            if (itemLink && priceData[itemLink] && priceData[itemLink].type === fav.type) {
+                const newData = priceData[itemLink];
+                const newPrice = newData.price;
+
+                if (!fav.priceHistory) {
+                    console.log(`Initializing priceHistory for ${fav.type}: ${fav.name}`);
+                    fav.priceHistory = [{ price: newPrice, timestamp: now }];
+                    updated = true;
+                }
+
+                console.log(`Price check for ${fav.name}: old=${fav.price}, new=${newPrice}`);
+                if (Math.abs(Number(fav.price || 0) - newPrice) > 0.01) {
+                    console.log(`Price changed for ${fav.type}: ${fav.name} from ${fav.price} to ${newPrice}`);
+                    fav.priceHistory.push({ price: newPrice, timestamp: now });
+                    fav.priceHistory = fav.priceHistory.filter(entry => now - entry.timestamp <= 30 * 24 * 60 * 60 * 1000);
+                    if (fav.priceHistory.length > 60) {
+                        fav.priceHistory = fav.priceHistory.slice(-60);
+                    }
+                    fav.oldPrice = fav.price;
+                    fav.price = newPrice;
+                    fav.priceChanged = true;
+                    fav.percentageChange = fav.oldPrice > 0 ? ((newPrice - fav.oldPrice) / fav.oldPrice * 100).toFixed(2) : 0;
+                    updated = true;
+                } else {
+                    fav.priceChanged = false;
+                    delete fav.oldPrice;
+                    delete fav.percentageChange;
+                }
+
+                const updatedFields = {
+                    price: newData.price,
+                    image: newData.image,
+                    link: newData.link,
+                    unavailable: false,
+                    name: newData.name,
+                    brand: newData.brand,
+                    store: newData.store
+                };
+
+                if (fav.type === 'gpu') {
+                    Object.assign(updatedFields, {
+                        model: newData.model,
+                        memory: newData.memory,
+                        shortName: newData.shortName,
+                        wattage: newData.wattage,
+                        imageUrl: newData.imageUrl
+                    });
+                } else if (fav.type === 'cpu') {
+                    Object.assign(updatedFields, {
+                        model: newData.model,
+                        cores: newData.cores,
+                        threads: newData.threads,
+                        baseClock: newData.baseClock,
+                        boostClock: newData.boostClock,
+                        socket: newData.socket,
+                        integratedGraphics: newData.integratedGraphics,
+                        generation: newData.generation,
+                        series: newData.series,
+                        tdp: newData.tdp
+                    });
+                } else if (fav.type === 'motherboard') {
+                    Object.assign(updatedFields, {
+                        platform: newData.platform,
+                        formfactor: newData.formfactor,
+                        chipset: newData.chipset,
+                        socket: newData.socket,
+                        memorytype: newData.memorytype,
+                        wifi: newData.wifi,
+                        bluetooth: newData.bluetooth,
+                        wifitype: newData.wifitype,
+                        m2slots: newData.m2slots,
+                        ramslots: newData.ramslots
+                    });
+                } else if (fav.type === 'ssd') {
+                    Object.assign(updatedFields, {
+                        capacity: newData.capacity,
+                        type: newData.type,
+                        readSpeed: newData.readSpeed,
+                        writeSpeed: newData.writeSpeed,
+                        formFactor: newData.formFactor,
+                        interface: newData.interface
+                    });
+                }
+
+                if (fav.url) {
+                    console.log(`Normalizing url to link for ${fav.type}: ${fav.name}`);
+                    updatedFields.link = fav.url;
+                    delete fav.url;
+                    updated = true;
+                }
+
+                return { ...fav, ...updatedFields };
+            } else {
+                console.log(`No price data found for ${fav.type}: ${fav.name}`);
+                const hasValidLink = (fav.link && fav.link !== '#') || (fav.url && fav.url !== '#');
+                return {
+                    ...fav,
+                    unavailable: !hasValidLink,
+                    priceChanged: false,
+                    image: fav.image || PLACEHOLDER_IMAGE,
+                    link: fav.url || fav.link || '#'
+                };
+            }
+        }
+        return fav;
+    });
+
+    if (updated) {
+        console.log('Updating favorites in localStorage:', favorites);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        displayFavorites();
+    }
+}
+
+// Display favorites
+function displayFavorites() {
+    const favoritesList = document.getElementById("favorites-list");
+    if (!favoritesList) return;
+    favoritesList.innerHTML = "";
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    const lang = localStorage.getItem('language') || 'lv';
+
+    if (favorites.length === 0) {
+        favoritesList.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-animation">
+                    <div class="pc-side">
+                        <div class="pc-window">
+                            <div class="motherboard"></div>
+                            <div class="pc-fan"></div>
+                            <div class="pc-components">
+                                <div class="component"></div>
+                                <div class="component"></div>
+                                <div class="component"></div>
+                                <div class="component"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pc-front">
+                        <div class="front-fan top-fan"></div>
+                        <div class="front-fan bottom-fan"></div>
+                        <div class="power-button"></div>
+                    </div>
+                    <div class="pc-top"></div>
+                    <div class="pc-top1"></div>
+                </div>
+                <p class="empty-message" data-key="noFavorites">${translations[lang].noFavorites}</p>
+                <a href="prieksa.html" class="goto-button" data-key="selectComponents">${translations[lang].selectComponents}</a>
+            </div>
+        `;
+        startGlitchParticles();
+        return;
+    }
+
+    favorites.forEach((item, index) => {
+        const itemElement = document.createElement("div");
+        itemElement.className = "favorite-item";
+        itemElement.style.animationDelay = `${index * 0.1}s`;
+
+        let specsHTML = '';
+        let iconClass = '';
+        let addToPrieksaParams = '';
+
+        if (item.type === "gpu") {
+            specsHTML = `
+                <div class="specs-table">
+                    <div class="spec">
+                        <span class="spec-label" data-key="model">${translations[lang].model}:</span>
+                        <span class="spec-value">${item.model || 'N/A'}</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="memory">${translations[lang].memory}:</span>
+                        <span class="spec-value">${item.memory || '0'} GB</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="store">${translations[lang].store}:</span>
+                        <span class="spec-value">${item.store || 'N/A'}</span>
+                    </div>
+                </div>
+            `;
+            iconClass = 'fas fa-microchip';
+            addToPrieksaParams = `'gpu', '${escapeString(item.name)}', ${item.price}, ${Number(item.memory) || 0}, '${escapeString(item.model || '')}', '${escapeString(item.brand || '')}', '${escapeString(item.store || '')}', '${encodeURIComponent(item.link || '#')}', '${encodeURIComponent(item.image || PLACEHOLDER_IMAGE)}', '${escapeString(item.shortName || '')}', ${Number(item.wattage) || 0}, '${encodeURIComponent(item.imageUrl || item.image || PLACEHOLDER_IMAGE)}'`;
+        } else if (item.type === "cpu") {
+            specsHTML = `
+                <div class="specs-table">
+                    <div class="spec">
+                        <span class="spec-label" data-key="model">${translations[lang].model}:</span>
+                        <span class="spec-value">${item.model || 'N/A'}</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="cores">${translations[lang].cores}:</span>
+                        <span class="spec-value">${item.cores || 'N/A'}</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="clockSpeed">${translations[lang].clockSpeed}:</span>
+                        <span class="spec-value">${item.baseClock || 'N/A'} GHz</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="store">${translations[lang].store}:</span>
+                        <span class="spec-value">${item.store || 'N/A'}</span>
+                    </div>
+                </div>
+            `;
+            iconClass = 'fas fa-server';
+            addToPrieksaParams = `'cpu', '${escapeString(item.name)}', ${item.price}, ${Number(item.cores) || 0}, ${Number(item.threads) || 0}, '${escapeString(String(item.baseClock) || '')}', '${escapeString(String(item.boostClock) || '')}', '${escapeString(item.socket || '')}', '${escapeString(item.brand || '')}', '${escapeString(item.integratedGraphics || 'No')}', '${encodeURIComponent(item.link || '#')}', '${encodeURIComponent(item.image || PLACEHOLDER_IMAGE)}', '${escapeString(item.store || '')}', '${escapeString(item.model || '')}', '${escapeString(item.generation || '')}', '${escapeString(item.series || '')}', ${Number(item.tdp) || 0}`;
+        } else if (item.type === "motherboard") {
+            specsHTML = `
+                <div class="specs-table">
+                    <div class="spec">
+                        <span class="spec-label" data-key="brand">${translations[lang].brand}:</span>
+                        <span class="spec-value">${item.brand || 'N/A'}</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="chipset">${translations[lang].chipset}:</span>
+                        <span class="spec-value">${item.chipset || 'N/A'}</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="socket">${translations[lang].socket}:</span>
+                        <span class="spec-value">${item.socket || 'N/A'}</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="formfactor">${translations[lang].formfactor}:</span>
+                        <span class="spec-value">${item.formfactor || 'N/A'}</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="store">${translations[lang].store}:</span>
+                        <span class="spec-value">${item.store || 'N/A'}</span>
+                    </div>
+                </div>
+            `;
+            iconClass = 'fas fa-memory';
+            addToPrieksaParams = `'motherboard', '${escapeString(item.name)}', ${item.price}, '${escapeString(item.brand || '')}', '${escapeString(item.platform || '')}', '${escapeString(item.formfactor || '')}', '${escapeString(item.chipset || '')}', '${escapeString(item.socket || '')}', '${escapeString(item.memorytype || '')}', '${escapeString(item.wifi || '')}', '${escapeString(item.bluetooth || '')}', '${escapeString(item.wifitype || '')}', ${Number(item.m2slots) || 0}, ${Number(item.ramslots) || 0}, '${encodeURIComponent(item.link || '#')}', '${encodeURIComponent(item.image || PLACEHOLDER_IMAGE)}', '${escapeString(item.store || '')}'`;
+        } else if (item.type === "ssd") {
+            specsHTML = `
+                <div class="specs-table">
+                    <div class="spec">
+                        <span class="spec-label" data-key="brand">${translations[lang].brand}:</span>
+                        <span class="spec-value">${item.brand || 'N/A'}</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="capacity">${translations[lang].capacity}:</span>
+                        <span class="spec-value">${item.capacity || '0'} GB</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="readSpeed">${translations[lang].readSpeed}:</span>
+                        <span class="spec-value">${item.readSpeed || '0'} MB/s</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="writeSpeed">${translations[lang].writeSpeed}:</span>
+                        <span class="spec-value">${item.writeSpeed || '0'} MB/s</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="interface">${translations[lang].interface}:</span>
+                        <span class="spec-value">${item.interface || 'N/A'}</span>
+                    </div>
+                    <div class="spec">
+                        <span class="spec-label" data-key="store">${translations[lang].store}:</span>
+                        <span class="spec-value">${item.store || 'N/A'}</span>
+                    </div>
+                </div>
+            `;
+            iconClass = 'fas fa-hdd';
+            addToPrieksaParams = `'ssd', '${escapeString(item.name)}', ${item.price}, ${Number(item.capacity) || 0}, '${escapeString(item.brand || '')}', '${escapeString(item.store || '')}', '${encodeURIComponent(item.link || '#')}', '${encodeURIComponent(item.image || PLACEHOLDER_IMAGE)}', ${Number(item.readSpeed) || 0}, ${Number(item.writeSpeed) || 0}, '${escapeString(item.formFactor || '')}', '${escapeString(item.interface || '')}'`;
+        } else {
+            specsHTML = `<p data-key="unknownType">${translations[lang].unknownType}</p>`;
+            iconClass = 'fas fa-question-circle';
+            addToPrieksaParams = `'unknown', '${escapeString(item.name)}', ${item.price}, '', '', '', '${escapeString(item.store || '')}', '${encodeURIComponent(item.link || '#')}', '${encodeURIComponent(item.image || PLACEHOLDER_IMAGE)}'`;
+        }
+
+        if (!item.priceHistory || item.priceHistory.length === 0) {
+            console.log(`No price history for ${item.type}: ${item.name}, initializing`);
+            item.priceHistory = [{ price: item.price, timestamp: Date.now() }];
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        }
+
+        let prevPrice = null;
+        let priceHistoryHTML = item.priceHistory
+            .slice()
+            .reverse()
+            .map(entry => {
+                let priceClass = '';
+                let percentageChangeHTML = '';
+                if (prevPrice !== null) {
+                    const isDecrease = entry.price < prevPrice;
+                    priceClass = isDecrease ? 'decrease' : entry.price > prevPrice ? 'increase' : '';
+                    const percentageChange = prevPrice > 0 ? ((entry.price - prevPrice) / prevPrice * 100).toFixed(2) : 0;
+                    percentageChangeHTML = `
+                        <span class="price-percentage ${priceClass}">
+                            ${isDecrease ? '↓' : entry.price > prevPrice ? '↑' : ''} ${Math.abs(percentageChange)}%
+                        </span>
+                    `;
+                }
+                prevPrice = entry.price;
+                return `
+                    <p>
+                        <span class="price ${priceClass}">${entry.price.toFixed(2)} EUR</span>
+                        ${percentageChangeHTML}
+                        <span class="timestamp">${formatTimestampToHour(entry.timestamp)}</span>
+                    </p>
+                `;
+            })
+            .join('');
+
+        let priceChangeHTML = '';
+        if (item.priceChanged && item.oldPrice !== undefined && item.percentageChange !== undefined) {
+            const isDecrease = item.price < item.oldPrice;
+            const changeClass = isDecrease ? 'decrease' : 'increase';
+            const arrowIcon = isDecrease ? 'fa-arrow-down' : 'fa-arrow-up';
+            priceChangeHTML = `
+                <div class="price-change ${changeClass}">
+                    <span>Old: ${item.oldPrice.toFixed(2)} EUR</span>
+                    <span>New: ${item.price.toFixed(2)} EUR</span>
+                    <span>${Math.abs(item.percentageChange)}% <i class="fas ${arrowIcon}"></i></span>
+                </div>
+            `;
+        }
+
+        const imageSrc = item.image || PLACEHOLDER_IMAGE;
+        const itemLink = item.link || item.url || '#';
+
+        itemElement.innerHTML = `
+            <img src="${imageSrc}" alt="${item.name}" class="component-image">
+            <i class="item-icon ${iconClass}"></i>
+            <div class="favorite-details">
+                <h3><a href="${itemLink}" target="_blank">${item.name}</a></h3>
+                ${specsHTML}
+            </div>
+            <div class="price-and-button">
+                <div class="favorite-price ${item.priceChanged ? 'price-updated' : ''} ${item.unavailable ? 'price-unavailable' : ''}" tabindex="0" role="button" aria-label="Show price history">
+                    <span class="price-text">
+                        ${item.price.toFixed(2)} EUR
+                        ${item.priceChanged ? '<i class="fas fa-bell"></i>' : ''}
+                        ${item.unavailable ? '<i class="fas fa-exclamation-triangle"></i>' : ''}
+                    </span>
+                    ${priceChangeHTML}
+                    <span class="price-history-tooltip">
+                        ${priceHistoryHTML}
+                    </span>
+                </div>
+                <div class="button-group">
+                    <button class="add-button" onclick="addToPrieksa(${addToPrieksaParams})">
+                        <i class="fas fa-plus"></i>
+                        <span data-key="add">${translations[lang].add}</span>
+                    </button>
+                    <button class="delete-button" onclick="removeFromFavorites(${index})">
+                        <i class="fas fa-trash-alt"></i>
+                        <span data-key="delete">${translations[lang].delete}</span>
+                    </button>
+                </div>
+            </div>
+        `;
+
+        favoritesList.appendChild(itemElement);
+
+        const favoritePrice = itemElement.querySelector('.favorite-price');
+        const tooltip = favoritePrice.querySelector('.price-history-tooltip');
+        favoritePrice.addEventListener('mouseenter', () => {
+            tooltip.style.display = 'block';
+        });
+        favoritePrice.addEventListener('mouseleave', () => {
+            tooltip.style.display = 'none';
+        });
+
+        if (item.priceChanged) {
+            item.priceChanged = false;
+            favorites[index] = item;
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        }
+    });
+
+    setLanguage(localStorage.getItem('language') || 'lv');
+}
+
+// Add to Prieksa
+function addToPrieksa(type, name, price, ...args) {
+    let selectedItem;
+    try {
+        if (type === "gpu") {
+            const [memory, model, brand, store, link, image, shortName, wattage, imageUrl] = args;
+            selectedItem = {
+                type: "gpu",
+                name,
+                price: Number(price) || 0,
+                memory: Number(memory) || 0,
+                model,
+                brand,
+                store,
+                link: decodeURIComponent(link),
+                image: decodeURIComponent(image),
+                shortName,
+                wattage: Number(wattage) || 0,
+                imageUrl: decodeURIComponent(imageUrl),
+                priceHistory: [{ price: Number(price) || 0, timestamp: Date.now() }]
+            };
+            localStorage.setItem('selectedGPU', JSON.stringify(selectedItem));
+        } else if (type === "cpu") {
+            const [cores, threads, baseClock, boostClock, socket, brand, integratedGraphics, link, image, store, model, generation, series, tdp] = args;
+            selectedItem = {
+                type: "cpu",
+                name,
+                price: Number(price) || 0,
+                cores: Number(cores) || 0,
+                threads: Number(threads) || 0,
+                baseClock: baseClock ? Number(baseClock) : '',
+                boostClock: boostClock ? Number(boostClock) : '',
+                socket,
+                brand,
+                integratedGraphics,
+                link: decodeURIComponent(link),
+                image: decodeURIComponent(image),
+                store,
+                model,
+                generation,
+                series,
+                tdp: Number(tdp) || 0,
+                priceHistory: [{ price: Number(price) || 0, timestamp: Date.now() }]
+            };
+            localStorage.setItem('selectedCPU', JSON.stringify(selectedItem));
+        } else if (type === "motherboard") {
+            const [brand, platform, formfactor, chipset, socket, memorytype, wifi, bluetooth, wifitype, m2slots, ramslots, link, image, store] = args;
+            selectedItem = {
+                type: "motherboard",
+                name,
+                price: Number(price) || 0,
+                brand,
+                platform,
+                formfactor,
+                chipset,
+                socket,
+                memorytype,
+                wifi,
+                bluetooth,
+                wifitype,
+                m2slots: Number(m2slots) || 0,
+                ramslots: Number(ramslots) || 0,
+                link: decodeURIComponent(link),
+                image: decodeURIComponent(image),
+                store,
+                priceHistory: [{ price: Number(price) || 0, timestamp: Date.now() }]
+            };
+            localStorage.setItem('selectedMotherboard', JSON.stringify(selectedItem));
+        } else if (type === "ssd") {
+            const [capacity, brand, store, link, image, readSpeed, writeSpeed, formFactor, interface] = args;
+            selectedItem = {
+                type: "ssd",
+                name,
+                price: Number(price) || 0,
+                capacity: Number(capacity) || 0,
+                brand,
+                store,
+                link: decodeURIComponent(link),
+                image: decodeURIComponent(image),
+                readSpeed: Number(readSpeed) || 0,
+                writeSpeed: Number(writeSpeed) || 0,
+                formFactor,
+                interface,
+                priceHistory: [{ price: Number(price) || 0, timestamp: Date.now() }]
+            };
+            localStorage.setItem('selectedSSD', JSON.stringify(selectedItem));
+        } else {
+            console.error(`Unknown component type: ${type}`);
+            return;
+        }
+        console.log(`Added ${type} to prieksa: ${name}, price: ${price}`);
+        window.location.href = "./prieksa.html";
+    } catch (error) {
+        console.error(`Error in addToPrieksa for ${type}:`, error);
+    }
+}
+
+// Remaining functions (unchanged)
+function removeFromFavorites(index) {
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    const item = document.querySelectorAll('.favorite-item')[index];
+    if (item) {
+        item.style.height = `${item.offsetHeight}px`;
+        item.style.overflow = 'hidden';
+        item.style.marginBottom = '1.5rem';
+        item.offsetHeight;
+        item.style.height = '0';
+        item.style.paddingTop = '0';
+        item.style.paddingBottom = '0';
+        item.style.marginBottom = '0';
+        item.style.opacity = '0';
+        setTimeout(() => {
+            item.remove();
+            favorites.splice(index, 1);
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            document.querySelectorAll('.favorite-item').forEach((el, i) => {
+                el.querySelector('.delete-button').setAttribute('onclick', `removeFromFavorites(${i})`);
+            });
+            if (favorites.length === 0) {
+                displayFavorites();
+            }
+        }, 300);
+    }
+}
+
+function goBack() {
+    window.history.back();
+}
+
+function createGlitchParticle() {
+    const particle = document.createElement('div');
+    particle.className = 'glitch-particle';
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+    const animationDiv = document.querySelector('.empty-animation');
+    if (animationDiv) {
+        animationDiv.appendChild(particle);
+        setTimeout(() => particle.remove(), 500);
+    }
+}
+
+function startGlitchParticles() {
+    function createNextParticle() {
+        createGlitchParticle();
+        setTimeout(createNextParticle, Math.random() * 20000 + 10000);
+    }
+    createNextParticle();
+}
+
+function createBubble() {
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.style.left = `${Math.random() * 100}%`;
+    bubble.style.animationDuration = `${2 + Math.random() * 3}s`;
+    const animationDiv = document.querySelector('.empty-animation');
+    if (animationDiv) {
+        animationDiv.appendChild(bubble);
+        setTimeout(() => bubble.remove(), 5000);
+    }
+}
+
+function createErrorMessage() {
+    const lang = localStorage.getItem('language') || 'lv';
+    const error = document.createElement('div');
+    error.className = 'error-message';
+    error.textContent = lang === 'lv' ? 'KĻŪDA: Nav atrasti favorīti.' : 'ERROR: No favorites found.';
+    const zone = Math.floor(Math.random() * 4);
+    let top, left;
+    switch (zone) {
+        case 0:
+            top = Math.random() * 30;
+            left = Math.random() * 30;
+            break;
+        case 1:
+            top = Math.random() * 30;
+            left = 70 + Math.random() * 30;
+            break;
+        case 2:
+            top = 70 + Math.random() * 30;
+            left = Math.random() * 30;
+            break;
+        case 3:
+            top = 70 + Math.random() * 30;
+            left = 70 + Math.random() * 30;
+            break;
+    }
+    error.style.top = `${top}%`;
+    error.style.left = `${left}%`;
+    const animationDiv = document.querySelector('.empty-animation');
+    if (animationDiv) {
+        animationDiv.appendChild(error);
+        setTimeout(() => error.remove(), 3000);
+    }
+}
+
+function setLanguage(lang) {
+    const validLang = ['lv', 'en'].includes(lang) ? lang : 'lv';
+    const elements = document.querySelectorAll('[data-key]');
+    elements.forEach(element => {
+        const key = element.getAttribute('data-key');
+        if (translations[validLang][key]) {
+            element.textContent = translations[validLang][key];
+        }
+    });
+    document.documentElement.lang = validLang;
+    localStorage.setItem('language', validLang);
+}
+
+// Initialization
+window.onload = async () => {
+    await updateFavoritePrices();
+    displayFavorites();
+    setInterval(updateFavoritePrices, PRICE_UPDATE_INTERVAL);
+    setInterval(createBubble, 1000);
+    setInterval(createErrorMessage, 5000);
+};
+
+document.addEventListener('click', (event) => {
+    const priceElement = event.target.closest('.favorite-price');
+    if (priceElement) {
+        const tooltip = priceElement.querySelector('.price-history-tooltip');
+        if (tooltip) {
+            document.querySelectorAll('.price-history-tooltip.shown-via-click').forEach(t => {
+                if (t !== tooltip) t.classList.remove('shown-via-click');
+            });
+            tooltip.classList.toggle('shown-via-click');
+            event.stopPropagation();
+        }
+    } else {
+        document.querySelectorAll('.price-history-tooltip.shown-via-click').forEach(tooltip => {
+            tooltip.classList.remove('shown-via-click');
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.favorite-price').forEach(el => {
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('role', 'button');
+        el.setAttribute('aria-label', 'Show price history');
+    });
+});
+
+    </script>
+
+</body>
+</html>
